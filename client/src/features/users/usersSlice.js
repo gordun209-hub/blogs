@@ -21,9 +21,14 @@ const usersSlice = createSlice({
     },
   },
 })
+
+export default usersSlice.reducer
+export const { initUsers, currentUser } = usersSlice.actions
 export const initializeUsers = () => async dispatch => {
   const users = await usersService.getAll()
   dispatch(usersSlice.actions.initUsers(users))
 }
-export default usersSlice.reducer
-export const { initUsers, currentUser } = usersSlice.actions
+// initialize users
+export const setCurrentUser = user => async dispatch => {
+  dispatch(usersSlice.actions.currentUser(user))
+}

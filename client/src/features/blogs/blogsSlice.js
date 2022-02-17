@@ -17,15 +17,17 @@ const blogsSlice = createSlice({
   },
 })
 
-
-export const createBlog = (blog) => async (dispatch) => {
-  const newBlog = await blogsService.create(blog)
-  dispatch(blogsSlice.actions.addBlog(newBlog))
-}
-
 export const { addBlog, setBlogs, setError, initBlogs } = blogsSlice.actions
 export default blogsSlice.reducer
 
+export const createBlog = (blog) => async (dispatch) => {
+  try {
+    const newBlog = await blogsService.create(blog)
+    dispatch(addBlog(newBlog))
+  } catch (error) {
+    dispatch(setError(error.message))
+  }
+}
 
 export const initializeBlogs = () => async (dispatch) => {
   try {

@@ -49,7 +49,15 @@ export const logoutUser = () => {
   blogService.setToken(null)
   return logout()
 }
-
+// get logged in user notes
+export const getUser = () => {
+  const loggedUserJson = window.localStorage.getItem('loggedBlogappUser')
+  if (loggedUserJson) {
+    const user = JSON.parse(loggedUserJson)
+    return user
+  }
+  return null
+}
 
 export const { loginSuccess, loginFailure, logout } = authSlice.actions
 

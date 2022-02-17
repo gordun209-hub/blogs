@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { login } from './authSlice'
 
-const LoginForm = () => {
+const LoginForm =  () => {
   const dispatch = useDispatch()
   const [password, setPassword] = useState('')
   const [email, setEmail] = useState('')

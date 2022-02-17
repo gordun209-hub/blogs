@@ -16,20 +16,19 @@ const BlogForm = () => {
   const handleTitleChange = (event) => {
     setTitle(event.target.value)
   }
-  const createNewBlog = async (event) => {
+  //create new blog
+  const createNewBlog = (event) => {
     event.preventDefault()
-    const blogObject = {
-      title,
-      author,
-      url,
-    }
-    dispatch(createBlog(blogObject))
-
+    dispatch(createBlog({ author, title, url }))
+    setAuthor('')
+    setTitle('')
+    setUrl('')
   }
+
   return (
     <div>
       <h2>Create new</h2>
-      <form onSubmit={createNewBlog}>
+      <form onSubmit={createNewBlog} >
         <div>
           <label htmlFor='title'>Title: </label>
           <input type='text' value={title} onChange={handleTitleChange} name='title' id='title' />

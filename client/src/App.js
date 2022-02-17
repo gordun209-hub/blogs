@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import Togglable from './components/Togglable'
 import Blog from './components/Blog'
-import { flatten, pluck } from 'ramda'
-import BlogForm from './components/BlogForm'
-import LoginForm from './components/loginform'
+import BlogForm from './features/blogs/BlogForm'
+import LoginForm from './features/users/LoginForm'
 import { Button } from 'react-bootstrap'
 import { useSelector, useDispatch } from 'react-redux'
-import { createNewBlog, initializeBlogs } from './Features/Blogs/blogsSlice'
-import { initializeUsers } from './Features/Users/usersSlice'
+import {  initializeBlogs } from './features/blogs/blogsSlice'
+import { initializeUsers } from '../src/features/users/usersSlice'
 import {
   initializeUser,
   loginFailure,
-  loginUser,
+  login,
   logout,
-} from './Features/Users/authUserSlice'
-import Users from './components/Users'
+} from './features/users/authSlice'
 const App = () => {
+
+
   const dispatch = useDispatch()
-  const user = useSelector(state => state.authUser.user)
-  const users = useSelector(state => state.users)
+  const user = useSelector(state => state.user.user)
+  const blogs = useSelector(state => state.blogs)
 
   //---------------------------hooks---------------- //
   const [username, setUsername] = useState('')
@@ -26,15 +26,17 @@ const App = () => {
   //fetching blogs
 
   useEffect(() => {
+
+    dispatch(initializeUser())
     dispatch(initializeBlogs())
     dispatch(initializeUsers())
-    dispatch(initializeUser())
+
   }, [dispatch])
   // ----------------------------------------------------------------//
   const handleLogin = async e => {
     e.preventDefault()
     try {
-      dispatch(loginUser(username, password))
+      dispatch(login(username, password))
       setUsername('')
       setPassword('')
     } catch (err) {
@@ -43,7 +45,7 @@ const App = () => {
   }
   // LOGINFORM
   const loginForm = () => (
-    <Togglable buttonLabel="log in">
+    <Togglable buttonLabel='log in'>
       <LoginForm
         username={username}
         password={password}
@@ -53,28 +55,28 @@ const App = () => {
       />
     </Togglable>
   )
-  // BLOGFORM// lopgut
   const blogForm = () => (
-    <Togglable buttonLabel="new blog">
-      <BlogForm   />
+    <Togglable buttonLabel='new blog'>
+      <BlogForm />
       <Button
-        variant="danger"
+        variant='danger'
         onClick={() => {
           localStorage.clear()
           dispatch(logout())
-        }}
-      >
+        }}>
         Logout
       </Button>
     </Togglable>
   )
 
-  const findLoggedInUser =
-    user && users.filter(userz => userz.username === user.username)
-  const loggedInuserBlogs = user && flatten(pluck('blogs')(findLoggedInUser))
+  const otherBlogs = () => {
+    const userId =user&& user.username
+    return  blogs.filter(blog => blog.user.username !== userId)
+
+  }
 
   return (
-    <div style={{ class: 'w3-highway-schoolbus' }}>
+    <div>
       {user === null ? (
         loginForm()
       ) : (
@@ -83,12 +85,11 @@ const App = () => {
             <p>{user.name} logged in</p>
           </div>
           {blogForm()}{' '}
-          {loggedInuserBlogs.map(blog => (
+          {user&&otherBlogs().map(blog => (
             <Blog key={blog.id} blog={blog} />
           ))}
         </div>
       )}
-      <Users />
     </div>
   )
 }
